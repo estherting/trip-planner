@@ -86,6 +86,7 @@ def newTrip_process(request):
         trip = Trip.objects.create(title=request.POST['title'], description=request.POST['description'], date_from=request.POST['date_from'], date_to=request.POST['date_to'], admin=user)
         trip.save()
         Agenda.objects.create(day=1, date=datetime.date.today(), trip=trip)
+        Agenda.objects.create(day=0, date=datetime.date.today(), trip=trip)
         return redirect('/profile')
 
 def plan(request, tripID):
@@ -94,7 +95,8 @@ def plan(request, tripID):
     context = {
         'user': user,
         'trip': Trip.objects.get(id=tripID),
-        'agendas': Agenda.objects.filter(trip=trip).exclude(day=1),
+        'agendas': Agenda.objects.filter(trip=trip).exclude(day=1).exclude(day=0),
+
     }
     if user.id == trip.admin.id:
         return render(request, 'trips/plan_admin.html', context)
@@ -109,18 +111,18 @@ def agenda(request, tripID):
 
 def newAgenda(request, tripID):
     trip = Trip.objects.get(id=tripID)
-    numAgenda = len(Agenda.objects.filter(trip=trip)) + 1
+    numAgenda = len(Agenda.objects.filter(trip=trip))
     agenda = Agenda.objects.create(day=numAgenda, date=datetime.date.today(), trip=trip)
     agenda.save()
     context = {
-        'agendas': Agenda.objects.filter(trip=trip).exclude(day=1),
+        'agendas': Agenda.objects.filter(trip=trip).exclude(day=1).exclude(day=0),
     }
     return render(request, 'trips/agenda_tabs.html', context)
 
 def agendaContent(request, tripID):
     trip = Trip.objects.get(id=tripID)
     context = {
-        'agendas': Agenda.objects.filter(trip=trip).exclude(day=1),
+        'agendas': Agenda.objects.filter(trip=trip).exclude(day=1).exclude(day=0),
     }
     return render(request, 'trips/agenda_tabcontents.html', context)
 
