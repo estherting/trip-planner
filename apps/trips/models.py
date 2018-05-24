@@ -74,7 +74,7 @@ class Trip(models.Model):
     description = models.TextField()
     date_from = models.DateField()
     date_to = models.DateField()
-    admin = models.ForeignKey(User, related_name="trips_planned")
+    admin = models.ForeignKey(User, related_name="trips_planned", on_delete=models.CASCADE)
     attended_by = models.ManyToManyField(User, related_name="trips_attending")
     invited = models.ManyToManyField(User, related_name="trips_invited_to")
     created_at = models.DateTimeField(auto_now_add=True)
@@ -83,7 +83,7 @@ class Trip(models.Model):
 class Agenda(models.Model):
     day = models.IntegerField()
     date = models.DateField()
-    trip = models.ForeignKey(Trip, related_name="agendas")
+    trip = models.ForeignKey(Trip, related_name="agendas", on_delete=models.CASCADE)
 
 class Activity(models.Model):
     location = models.CharField(max_length=255)
